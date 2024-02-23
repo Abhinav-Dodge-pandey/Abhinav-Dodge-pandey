@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #333;
+            font-size: 36px;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-top: 20px;
+        }
+    </style>
+    <title>Tic Tac Toe</title>
+</head>
+<body>
+
+<div id="app">
+    <h1>Tic Tac Toe</h1>
+    <div class="board" id="board">
+        <div class="cell" data-index="0" onclick="handleClick(0)"></div>
+        <div class="cell" data-index="1" onclick="handleClick(1)"></div>
+        <div class="cell" data-index="2" onclick="handleClick(2)"></div>
+        <div class="cell" data-index="3" onclick="handleClick(3)"></div>
+        <div class="cell" data-index="4" onclick="handleClick(4)"></div>
+        <div class="cell" data-index="5" onclick="handleClick(5)"></div>
+        <div class="cell" data-index="6" onclick="handleClick(6)"></div>
+        <div class="cell" data-index="7" onclick="handleClick(7)"></div>
+        <div class="cell" data-index="8" onclick="handleClick(8)"></div>
+    </div>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    const board = document.getElementById('board');
+    const message = document.getElementById('message');
+    const cells = document.querySelectorAll('.cell');
+
+    let currentPlayer = 'X';
+    let gameBoard = ['', '', '', '', '', '', '', '', ''];
+    let gameActive = true;
+
+    function checkWinner() {
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+            [0, 4, 8], [2, 4, 6]             // diagonals
+        ];
+
+        for (const pattern of winPatterns) {
+            const [a, b, c] = pattern;
+            if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                return gameBoard[a];
+            }
+        }
+
+        return null;
+    }
+
+    function checkTie() {
+        return gameBoard.every(cell => cell !== '');
+    }
+
+    function handleClick(index) {
+        if (!gameBoard[index] && gameActive) {
+            gameBoard[index] = currentPlayer;
+            cells[index].innerText = currentPlayer;
+
+            const winner = checkWinner();
+            if (winner) {
+                message.innerText = `Player ${winner} wins!`;
+                gameActive = false;
+            } else if (checkTie()) {
+                message.innerText = 'It\'s a tie!';
+                gameActive = false;
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                message.innerText = `Player ${currentPlayer}'s turn`;
+            }
+        }
+    }
+
+    function resetGame() {
+        gameBoard = ['', '', '', '', '', '', '', '', ''];
+        gameActive = true;
+        currentPlayer = 'X';
+        message.innerText = `Player ${currentPlayer}'s turn`;
+
+        cells.forEach(cell => {
+            cell.innerText = '';
+        });
+    }
+
+    // Add a reset button
+    const resetButton = document.createElement('button');
+    resetButton.innerText = 'Reset Game';
+    resetButton.addEventListener('click', resetGame);
+    document.getElementById('app').appendChild(resetButton);
+</script>
+
+</body>
+</html>
